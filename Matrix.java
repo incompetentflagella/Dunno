@@ -1,6 +1,5 @@
 
 
-
 /*TO DO:
  * *convert for loops to for each loops
  * *write  exceptions : NotSquareMatrix, NotSameDimensions, NotValidMatrix
@@ -227,59 +226,9 @@ public class Matrix
 		return trace;
 	}
 
-	public Matrix getZero()
-	{
-		Matrix zero=new Matrix(NUMBER_OF_ROWS,NUMBER_OF_COLUMNS);
-		return zero;
-	}
+	
 
-	public Matrix getIdentity(char choice)
-	{
-		Matrix identity;
-		switch(choice)
-		{
-		case 's':
-			if(isSquare())
-			{
-				identity=new Matrix(NUMBER_OF_COLUMNS, NUMBER_OF_COLUMNS);
-				for(int s=0; s < NUMBER_OF_COLUMNS; s++)
-				{
-					identity.setElement(s, s, 1.0);
-				}
-				return identity;
-			}	
-			else 
-			{
-				return null;
-			}
-			break;
-		case 'c':
-			identity = new Matrix(NUMBER_OF_COLUMNS,NUMBER_OF_COLUMNS);
-			for(int s=0; s < NUMBER_OF_COLUMNS; s++)
-			{
-				identity.setElement(s, s, 1.0);
-			}
-			break;
-		case 'r':
-			identity = new Matrix(NUMBER_OF_ROWS, NUMBER_OF_ROWS);
-			for(int s=0; s<NUMBER_OF_ROWS; s++)
-			{
-				identity.setElement(s, s, 1.0);
-			}
-			break;
-		case 'h':
-			identity = new Matrix (NUMBER_OF_ROWS, NUMBER_OF_COLUMNS);
-			int shortestSide = (NUMBER_OF_COLUMNS <= NUMBER_OF_ROWS) ? NUMBER_OF_COLUMNS : NUMBER_OF_ROWS;
-			for(int s = 0; s < shortestSide; s++)
-			{
-				identity.setElement(s, s, 1.0);
-			}
-			break;
-		default throw
-
-		}
-		return identity;
-	}
+	
 
 	public Matrix getTranspose()
 	{
@@ -390,5 +339,26 @@ public class Matrix
 		boolean checkFor1=true
 				if ()
 	}
+	public static Matrix getZero(r,c)
+	{
+		Matrix zero=new Matrix(r,c);
+		return zero;
+	}public  static Matrix getIdentity(int s)
+	{
+		Matrix identity;
+		
+		
+			identity=new Matrix(s, s);
+			for(int s=0; s < NUMBER_OF_COLUMNS; s++)
+			{
+				identity.setElement(s, s, 1.0);
+			}
+			
+			
+
+		
+		return identity;
+	}
+	
 }
 
