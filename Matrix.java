@@ -1,13 +1,13 @@
 
-
 /*TO DO:
  * *convert for loops to for each loops
  * *write  exceptions : NotSquareMatrix, NotSameDimensions, NotValidMatrix
- * *get rid of switch in getIdentity()
+ * *write lu factorisation
  * *write method for gaussian(reduced and row reduced)
  * *write methods for eigenvalues and eigenvectors
  * *write tentative division/factoring
  * *write separate, private/protected transpose and adjoint methods without exceptions and new for the inverse
+ * *Write default constructor
  */
 
 public class Matrix
@@ -75,7 +75,8 @@ public class Matrix
 
 	private boolean canBeAdded(Matrix other)
 	{
-		return (this.NUMBER_OF_COLUMNS == other.NUMBER_OF_COLUMNS && this.NUMBER_OF_ROWS == other.NUMBER_OF_ROWS);
+		return (this.NUMBER_OF_COLUMNS == other.NUMBER_OF_COLUMNS 
+					&& this.NUMBER_OF_ROWS == other.NUMBER_OF_ROWS);
 	}
 
 
