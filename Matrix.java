@@ -1,19 +1,19 @@
 
 /*TO DO:
  * *convert for loops to for each loops
- * *write  exceptions : NotSquareMatrix, NotSameDimensions, NotValidMatrix
+ * *write  exceptions incorrect dimensions matrix
  * *write lu factorisation
  * *write method for gaussian(reduced and row reduced)
  * *write methods for eigenvalues and eigenvectors
- * *write tentative division/factoring
- * *write separate, private/protected transpose and adjoint methods without exceptions and new for the inverse
+ * *write tentative factoring
+ * *write better private adjoint
  * *Write default constructor
+ * *finish unwritten methods
  */
 
 public class Matrix
 {
 	private double matrix[][];
-	private java.util.Scanner keyboard = new java.util.Scanner(System.in);
 	public final int NUMBER_OF_ROWS, NUMBER_OF_COLUMNS;
 
 	public Matrix (int r, int c){
@@ -22,9 +22,12 @@ public class Matrix
 		this.NUMBER_OF_ROWS = r;
 		this.NUMBER_OF_COLUMNS = c;
 	}
+	
+	public Matrix(){}
 
 	public void enterValues()
-	{
+	{	
+		java.util.Scanner keyboard = new java.util.Scanner(System.in);
 		System.out.println(this.toString());
 		for(double[] row:matrix)
 		{
@@ -47,20 +50,41 @@ public class Matrix
 
 	public String toString()
 	{
-		String builder = "";
+		StringBuilder builder = new StringBuilder(this.NUMBER_OF_ROWS*this.NUMBER_OF_COLUMNS+3*this.NUMBER_OF_COLUMNS);
 		for (double[] row : this.matrix) 
 		{
-			builder = builder + ("[");
+			builder.append('[');
 			for (double element : row)
 			{
 				//if(matrix[r][c]==null)System.out.print("-\t");
-				builder=builder + (element + "\t");
+				builder.append(element);
+				builder.append('\t');
 			}
-			builder= builder.substring(0, builder.length() - 1 ) + ("]\n");
+			builder.deleteCharAt(builder.length()-1);
+			builder.append(']');
+			builder.append('\n');
+			
 		}
-		return builder;
+		return builder.toString();
 	}
+	
+	public boolean isLowerTriangular();
+	public boolean isUpperTriangular();
 
+	
+	
+	public boolean equals(Matrix other, double fakeZero)
+	{
+		for(int r = 0; r < NUMBER_OF_ROWS; r++){
+			for(int c = 0; c < NUMBER_OF_COLUMNS; c++){
+				if(Math.abs( this.getElement(r,c)-other.getElement(r,c))!=fakeZero){
+					return false;
+				}
+			}
+		}
+		return true;	
+	}
+	
 	public boolean equals(Matrix other){
 		for(int r = 0; r < NUMBER_OF_ROWS; r++){
 			for(int c = 0; c < NUMBER_OF_COLUMNS; c++){
@@ -214,10 +238,10 @@ public class Matrix
 		return minor;
 	}
 
-	public double getTrace throws()
+	public double getTrace() throws IncorrectDimensionsException
 	{
 		if(!isSquare())
-		{throw
+		{throw new IncorrectDimensionsException();
 		}
 		double trace = 0;
 		for(int s = 0; s < NUMBER_OF_COLUMNS; s++)
@@ -226,7 +250,7 @@ public class Matrix
 		}
 		return trace;
 	}
-
+	 public double makeDeterminant(){}
 	
 
 	
@@ -244,13 +268,19 @@ public class Matrix
 		return trp;
 	}
 
-	public Matrix getAdjoint() throws
+	public Matrix getAdjoint() throws IncorrectDimensionsException
 	{
 		if(!isSquare())
 		{
-			throw;
+			throw IncorrectDimensionsException;
 		}
 		Matrix adj= new Matrix(this.NUMBER_OF_ROWS, this.NUMBER_OF_COLUMNS);
+		changeToAdjoint(adj);
+		return adj;
+	}
+	//this is a bad idea
+	private void changeToAdjoint(Matrix adj)
+	{
 		for(int r = 0; r < this.NUMBER_OF_ROWS; r++)
 		{
 			for(int c = 0; c < this.NUMBER_OF_COLUMNS; c++)
@@ -258,14 +288,13 @@ public class Matrix
 				adj.setElement(r, c, getMinor(r, c).calculateDeterminant() * (((r + c) % 2 == 1) ? 1 : -1));
 			}
 		}
-		return adj;
 	}
 
-	public Matrix getInverse()throws
+	public Matrix getInverse()throws IncorrectDimensionsException
 	{
 		if(!isSquare())
 		{
-			throw;
+			throw IncorrectDimensionsException;
 		}
 		Matrix inv = getAdjoint().getTranspose().multiply(1 / calculateDeterminant());
 		return inv;
@@ -273,7 +302,7 @@ public class Matrix
 
 	public void swapRows(int r1, int r2)
 	{
-		System.out.println("Swapping rows "+ r1 + " and " r2);
+		System.out.println("Swapping rows "+ r1 + " and " + r2);
 		double[] temp = this.matrix[r1];
 		this.matrix[r1] = this.matrix[r2];
 		this.matrix[r2] = temp;
@@ -294,72 +323,95 @@ public class Matrix
 		}
 	}
 
-	public void augment(double[] b) throws
-	{
-		if(b.length!=this.NUMBER_OF_ROWS)
-		{
-			throw
-		}
-		Matrix augmented=new Matrix(this.NUMBER_OF_ROWS,this.NUMBER_OF_COLUMNS+1);
-		for(int r:)
+//	public void augment(double[] b) throws
+//	{
+//		if(b.length!=this.NUMBER_OF_ROWS)
+//		{
+//			throw
+//		}
+//		Matrix augmented=new Matrix(this.NUMBER_OF_ROWS,this.NUMBER_OF_COLUMNS+1);
+//		for(int r:)
+//
+//	}
 
-	}
-
-	public void augment (Matrix other) throws
+	public void augment (Matrix other) throws IncorrectDimensionsException
 	{
 		if(other.NUMBER_OF_ROWS!=this.NUMBER_OF_ROWS)
 		{
-			throw
+			throw new IncorrectDimensionsException();
 		}
 		Matrix augmented = new Matrix(this.NUMBER_OF_ROWS, this.NUMBER_OF_COLUMNS + other.NUMBER_OF_COLUMNS);
-		for(int row = 0, row < NUMBER_OF_ROWS, row++)
+		for(int row = 0; row < NUMBER_OF_ROWS; row++)
 		{
-			for(int col = 0, col < augmented.NUMBER_OF_COLUMNS, col++)
+			for(int col = 0; col < this.NUMBER_OF_COLUMNS; col++)
 			{
-				augmented.setElement(row,col,(col<NUMBER_OF_COLUMNS?(getElement(row,col)):other.getElement(row,col)));
+				augmented.setElement(row,col,getElement(row,col));
+			}
+			for(int col = this.NUMBER_OF_COLUMNS ,  c =0; col < augmented.NUMBER_OF_COLUMNS; col++,c++)
+			{
+				augmented.setElement(row,col,other.getElement(row,c));
 			}
 		}
 	}
-	public Matrix[] split (int col)
+	public Matrix[] split (int... cols)
 	{
-		Matrix[] matrices = {new Matrix(row,col), new Matrix(row,NUMBER_OF_COLUMNS-col)};
-		for(int r=0, r<NUMBER_OF_ROWS, r++)
+		Matrix[] matrices = new Matrix[cols.length+1];
+		
+		for(int r=0; r<NUMBER_OF_ROWS; r++)
 		{
-			for(int c=0,c<col,c++)
+			for(int c=0;c<cols[0];c++)
 			{
-				matrices[0].setElement(r,c, this.getElement(row,c));
-			}
-			for(int c=col,c<NUMBER_OF_COLUMNS,c++)
-			{
-				matrices[1].setElement(r,c-col, this.getElement(r,col));
+				matrices[0].setElement(r,c, this.getElement(r,c));
 			}
 		}
+		if (cols.length!=1){
+			for (int m=1; m<cols.length;m++){
+				for(int r=0; r<NUMBER_OF_ROWS; r++)
+				{
+					for(int c=0,s=cols[m-1];s<cols[m];c++,s++)
+					{
+						matrices[m].setElement(r,c, this.getElement(r,s));
+					}
+				}
+			}
+		}
+		
+		for(int r=0; r<NUMBER_OF_ROWS; r++)
+		{		
+			for(int c=cols[cols.length-1],s=0;c<NUMBER_OF_COLUMNS;c++,s++)
+			{
+				matrices[cols.length].setElement(r,s, this.getElement(r,c));
+			}
+		}
+		return matrices;
 	}
+	
+	public Matrix splitThisInTwo(){}
 
 	public void reduce(){
-		boolean checkFor1=true
-				if ()
+		boolean checkFor1=true;
+				if (true);
 	}
-	public static Matrix getZero(r,c)
+	public Matrix factoriseLeft(){}
+	public Matrix factoriseRight(){}
+	public Matrix[] factoriseLUP(){}
+	public static Matrix getZero(int r,int c)
 	{
 		Matrix zero=new Matrix(r,c);
 		return zero;
-	}public  static Matrix getIdentity(int s)
+	}
+	
+	public  static Matrix getIdentity(int n)
 	{
 		Matrix identity;
-		
-		
-			identity=new Matrix(s, s);
-			for(int s=0; s < NUMBER_OF_COLUMNS; s++)
+			identity=new Matrix(n, n);
+			for(int s=0; s < n; s++)
 			{
 				identity.setElement(s, s, 1.0);
 			}
-			
-			
-
-		
 		return identity;
 	}
 	
 }
+
 
