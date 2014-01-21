@@ -1,4 +1,3 @@
-
 /*TO DO:
  * *convert for loops to for each loops
  * *write  exceptions incorrect dimensions matrix
@@ -386,15 +385,17 @@ public class Matrix
 		return matrices;
 	}
 	
-	public Matrix splitThisInTwo(){}
+	
 
 	public void reduce(){
-		boolean checkFor1=true;
-				if (true);
+		int maxRowNum
+		
 	}
 	public Matrix factoriseLeft(){}
 	public Matrix factoriseRight(){}
 	public Matrix[] factoriseLUP(){}
+
+	
 	public static Matrix getZero(int r,int c)
 	{
 		Matrix zero=new Matrix(r,c);
